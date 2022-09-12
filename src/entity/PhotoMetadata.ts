@@ -3,7 +3,6 @@ import { Photo } from "./Photo";
 
 @Entity()
 export class PhotoMetadata {
-
 	@PrimaryGeneratedColumn()
 	id: number;
 

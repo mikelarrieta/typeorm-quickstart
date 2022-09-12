@@ -152,36 +152,39 @@ async function queryPhotoWithAlbums(connection: Connection) {
 
 async function queryPhotoWithAlbumsQueryBuilder(connection: Connection) {
 	const photos = await connection
-								.getRepository(Photo)
-								.createQueryBuilder("photo")
-								.innerJoinAndSelect("photo.metadata", "metadata")
-								.leftJoinAndSelect("photo.albums", "album")
-								.where("photo.isPublished = true")
-								.andWhere("(photo.name = :photoName OR photo.name = :bearName)")
-								.orderBy("photo.id", "DESC")
-								.skip(0)
-								.take(10)
-								.setParameters({ photoName: "Me and Bears", bearName: "Bears" })
-								.getMany();
+		.getRepository(Photo)
+		.createQueryBuilder("photo")
+		.innerJoinAndSelect("photo.metadata", "metadata")
+		.leftJoinAndSelect("photo.albums", "album")
+		.where("photo.isPublished = true")
+		.andWhere("(photo.name = :photoName OR photo.name = :bearName)")
+		.orderBy("photo.id", "DESC")
+		.skip(0)
+		.take(10)
+		.setParameters({ photoName: "Me and Bears", bearName: "Bears" })
+		.getMany();
 	console.log(photos);
 }
 
-async function main() {
-	const connection = await createConnection();
+(async function () {
+	let connection: Connection;
+	try {
+		connection = await createConnection();
 
-	// await insertOnePhoto(connection);
-	// await loadOperations(connection);
-	// await updateOnePhoto(connection);
-	// await removeOnePhoto(connection);
-	//	await insertOnePhotoAndMetadata(connection);
-	// await queryPhotosWithRelations(connection);
-	// await queryPhotosWithRelationsQueryBuilder(connection)
-	// await insertOnePhotoAndMetadataCascade(connection);
-	// await insertAlbumsAndPhotos(connection)
-	// await queryPhotoWithAlbums(connection);
-	// await queryPhotoWithAlbumsQueryBuilder(connection);
-
-	await connection.close();
-};
-
-main().then(() => console.log("Finished.")).catch(console.error);
+		await insertOnePhoto(connection);
+		await loadOperations(connection);
+		await updateOnePhoto(connection);
+		await removeOnePhoto(connection);
+		await insertOnePhotoAndMetadata(connection);
+		await queryPhotosWithRelations(connection);
+		await queryPhotosWithRelationsQueryBuilder(connection)
+		await insertOnePhotoAndMetadataCascade(connection);
+		await insertAlbumsAndPhotos(connection)
+		await queryPhotoWithAlbums(connection);
+		await queryPhotoWithAlbumsQueryBuilder(connection);
+	} catch (error) {
+		console.error(error);
+	} finally {
+		await connection.close();
+	}
+})();
